@@ -14,10 +14,17 @@ var three = inc(two)
 var four = inc(three)
 var five = inc(four)
 
+// arithmetic
+var add = (n) => (m) => (f) => (x) =>
+  m(f)(n(f)(x))
+var mult = (n) => (m) => (f) => (x) =>
+  m(n(f))(x)
+
 var ten = mult(two)(five)
 var fifteen = mult(three)(five)
 var one_hundred = mult(ten)(ten)
 
+// booleans
 var Qtrue  = (a) => (b) => a
 var Qfalse = (a) => (b) => b
 var Qif    = (b) => b
@@ -32,13 +39,7 @@ var tupleify = (f) => (t) =>
 var dec = (n) => (f) => (x) =>
   fst(n(tupleify(f))(tuple(x)(Qfalse)))
 
-// arithmetic
-var add = (n) => (m) => (f) => (x) =>
-  m(f)(n(f)(x))
-var mult = (n) => (m) => (f) => (x) =>
-  m(n(f))(x)
-
-var toNum  = (f) => f((x) => x + 1)(0)
+var toNum  = (n) => n((x) => x + 1)(0)
 var toBool = (b) => Qif(b)(true)(false)
 
 document.write(toNum(mult(five)(fifteen)))
