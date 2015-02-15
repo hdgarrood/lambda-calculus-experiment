@@ -1,5 +1,9 @@
+// combinators
+var K = (x) => (y) => x
+var I = (x) => x
+var Y = (f) => ((x) => x(x))((x) => f((y) => (x(x))(y)))
 
-var Qconst = (a) => () => a
+var Qconst = K
 
 var tuple = (x) => (y) => (f) => f(x)(y)
 var fst = (t) => t((x) => (y) => x)
@@ -39,7 +43,20 @@ var tupleify = (f) => (t) =>
 var dec = (n) => (f) => (x) =>
   fst(n(tupleify(f))(tuple(x)(Qfalse)))
 
+var almostFactorial = (fact) => (n) =>
+  Qif(isZero(n))(
+      one)(
+      mult(n)(fact(dec(n))))
+
+var factorial = Y(almostFactorial)
+
+// var div = (n) => (m) => (f) => (x) =>
+  
+
+// var mod = (n) => (m) => (f) => (x) =>
+  
+
 var toNum  = (n) => n((x) => x + 1)(0)
 var toBool = (b) => Qif(b)(true)(false)
 
-document.write(toNum(mult(five)(fifteen)))
+document.write(toNum(factorial(five)))

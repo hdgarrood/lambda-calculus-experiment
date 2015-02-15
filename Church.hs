@@ -26,9 +26,10 @@ isZero = \n -> n (const false) true
 inc = \n -> \f x -> f (n f x)
 
 
+tupleify :: _ -> a -> a
 tupleify = \f t -> if' (snd t)
-                        (tuple (f (fst t)) (snd t))
-                        (tuple (f (fst t)) (snd t))
+                        (tuple (f (fst t)) true)
+                        (tuple (fst t)     true)
 -- tupleify =
 --     \f t -> if' (snd t)
 --                     (tuple (f (fst t)) true)
