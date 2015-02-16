@@ -149,7 +149,7 @@ var toBool = (b) => Qif(b)(() => true)(() => false)
 var showList = (list) =>
   list(
     () => "")(
-    (head) => (tail) => head.toString() + ' ' + showList(tail))
+    (head) => (tail) => head.toString() + "\n" + showList(tail))
 
 var showFizzbuzz = (fb) =>
   fb(
@@ -163,5 +163,6 @@ var showFizzbuzzes = (fbs) => showList(map(showFizzbuzz)(fbs))
 // Warning: this is really expensive!
 var go = function() {
   var fizzbuzzes = makeFizzbuzzes(oneHundred)
-  document.write(showFizzbuzzes(fizzbuzzes))
+  var str = showFizzbuzzes(fizzbuzzes)
+  document.getElementById('result').innerText = str
 }

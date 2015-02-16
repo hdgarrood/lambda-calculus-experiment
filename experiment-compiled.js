@@ -21,6 +21,7 @@ var Y = function (f) {
 
 var Qconst = K;
 
+// A tuple is a container for two elements.
 var tuple = function (x) {
   return function (y) {
     return function (f) {
@@ -43,7 +44,8 @@ var snd = function (t) {
   });
 };
 
-// natural numbers
+// natural numbers are represented by a function that takes a function and a
+// value, and applies the function to the value n times.
 var zero = function (f) {
   return function (x) {
     return x;
@@ -87,11 +89,11 @@ var fifteen = mult(three)(five);
 var oneHundred = mult(ten)(ten);
 
 // booleans
-// The intended use here is that when using Qif, you supply 0-arity functions
-// that simply return the values you wanted. We can't just put the values in,
-// because then both branches are forced, and this means recursive functions
-// which rely on Qif in order to decide whether to recurse will cause a stack
-// overflow.
+// The idea here is that when using Qif, you supply 0-arity functions that
+// simply return the values you wanted. We can't accept the bare values because
+// then both branches would be forced, and this would mean that our recursive
+// functions (which rely on Qif to decide whether to recurse or not) would blow
+// the stack.
 var Qtrue = function (a) {
   return function (b) {
     return a();
@@ -116,6 +118,11 @@ var isZero = function (n) {
 };
 
 // decrement is a little harder
+// the idea here is to turn a wrap the eventually supplied function in another
+// function that does nothing on the first time it gets called, and behaves
+// normally afterwards. The actual value is the first element of the tuple, and
+// the second element is a boolean value that records whether it's the first
+// time the function has been called or not.
 var tupleify = function (f) {
   return function (t) {
     return Qif(snd(t))(function () {
@@ -248,6 +255,7 @@ var singleton = function (elem) {
   return cons(elem)(emptyList);
 };
 
+// apply a function to every element in a list
 var map = function (f) {
   return function (list) {
     return list(function () {
@@ -260,14 +268,7 @@ var map = function (f) {
   };
 };
 
-var compose = function (f) {
-  return function (g) {
-    return function (x) {
-      return f(g(x));
-    };
-  };
-};
-
+// generate a list of numbers from lo to hi
 var listFromTo = function (lo) {
   return function (hi) {
     return Qif(numEq(lo)(hi))(function () {
@@ -338,7 +339,8 @@ var makeFizzbuzzes = function (max) {
   return map(toFizzbuzz)(listFromTo(one)(max));
 };
 
-// utilities
+// Interface code. Only stuff below here is allowed to use JS features other
+// than just functions (eg, strings, numbers, console)
 var log = console.log.bind(console);
 var toNum = function (n) {
   return n(function (x) {
@@ -358,7 +360,7 @@ var showList = function (list) {
     return "";
   })(function (head) {
     return function (tail) {
-      return head.toString() + " " + showList(tail);
+      return head.toString() + "\n" + showList(tail);
     };
   });
 };
@@ -379,7 +381,9 @@ var showFizzbuzzes = function (fbs) {
   return showList(map(showFizzbuzz)(fbs));
 };
 
+// Warning: this is really expensive!
 var go = function () {
   var fizzbuzzes = makeFizzbuzzes(oneHundred);
-  document.write(showFizzbuzzes(fizzbuzzes));
+  var str = showFizzbuzzes(fizzbuzzes);
+  document.getElementById("result").innerText = str;
 };
