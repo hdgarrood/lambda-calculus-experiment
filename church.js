@@ -35,6 +35,7 @@ var Qif    = (b) => b
 
 var isZero = (n) => n(Qconst(Qfalse))(Qtrue)
 
+// decrement is a little harder
 var tupleify = (f) => (t) =>
   Qif(snd(t))(
       tuple(f(fst(t)))(Qtrue))(
@@ -43,10 +44,22 @@ var tupleify = (f) => (t) =>
 var dec = (n) => (f) => (x) =>
   fst(n(tupleify(f))(tuple(x)(Qfalse)))
 
-var almostFactorial = (fact) => (n) =>
+// more arithmetic
+var sub_recur = (recur) => (n) => (m) =>
+  toBool(isZero(n))
+    ? m
+    : toBool(isZero(m))
+      ? n
+      : recur(dec(n))(dec(m))
+  // Qif(isZero(n))(
+  //     m)(Qif(isZero(m))(
+  //         n)(recur(dec(m))(dec(n))))
+var sub = Y(sub_recur)
+
+var almostFactorial = (recur) => (n) =>
   Qif(isZero(n))(
       one)(
-      mult(n)(fact(dec(n))))
+      mult(n)(recur(dec(n))))
 
 var factorial = Y(almostFactorial)
 
@@ -59,4 +72,4 @@ var factorial = Y(almostFactorial)
 var toNum  = (n) => n((x) => x + 1)(0)
 var toBool = (b) => Qif(b)(true)(false)
 
-document.write(toNum(factorial(five)))
+//document.write(toNum(factorial(five)))
