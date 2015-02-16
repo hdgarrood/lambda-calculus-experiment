@@ -1,3 +1,7 @@
+// inspired by:
+//   http://raganwald.com/2015/02/13/functional-quantum-electrodynamics.html
+//   http://codon.com/programming-with-nothing 
+//
 // combinators
 var K = (x) => (y) => x
 var I = (x) => x
