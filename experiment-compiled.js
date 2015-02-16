@@ -90,7 +90,8 @@ var oneHundred = mult(ten)(ten);
 // The intended use here is that when using Qif, you supply 0-arity functions
 // that simply return the values you wanted. We can't just put the values in,
 // because then both branches are forced, and this means recursive functions
-// don't work.
+// which rely on Qif in order to decide whether to recurse will cause a stack
+// overflow.
 var Qtrue = function (a) {
   return function (b) {
     return a();

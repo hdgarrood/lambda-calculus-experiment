@@ -5,11 +5,13 @@ var Y = (f) => ((x) => x(x))((x) => f((y) => (x(x))(y)))
 
 var Qconst = K
 
+// A tuple is a container for two elements.
 var tuple = (x) => (y) => (f) => f(x)(y)
 var fst = (t) => t((x) => (y) => x)
 var snd = (t) => t((x) => (y) => y)
 
-// natural numbers
+// natural numbers are represented by a function that takes a function and a
+// value, and applies the function to the value n times.
 var zero = (f) => (x) => x
 var inc = (n) => (f) => (x) => f(n(f)(x))
 var one = inc(zero)
@@ -29,10 +31,11 @@ var fifteen = mult(three)(five)
 var oneHundred = mult(ten)(ten)
 
 // booleans
-// The intended use here is that when using Qif, you supply 0-arity functions
-// that simply return the values you wanted. We can't just put the values in,
-// because then both branches are forced, and this means recursive functions
-// don't work.
+// The idea here is that when using Qif, you supply 0-arity functions that
+// simply return the values you wanted. We can't accept the bare values because
+// then both branches would be forced, and this would mean that our recursive
+// functions (which rely on Qif to decide whether to recurse or not) would blow
+// the stack.
 var Qtrue  = (a) => (b) => a()
 var Qfalse = (a) => (b) => b()
 var Qif    = I
@@ -42,6 +45,11 @@ var isZero = (n) =>
   n(Qconst(Qfalse))(Qtrue)
 
 // decrement is a little harder
+// the idea here is to turn a wrap the eventually supplied function in another
+// function that does nothing on the first time it gets called, and behaves
+// normally afterwards. The actual value is the first element of the tuple, and
+// the second element is a boolean value that records whether it's the first
+// time the function has been called or not.
 var tupleify = (f) => (t) =>
   Qif(snd(t))(
     () => tuple(f(fst(t)))(Qtrue))(
@@ -103,13 +111,13 @@ var isEmpty = (list) => list(() => Qtrue)((h, t) => Qfalse)
 // make a list with one element
 var singleton = (elem) => cons(elem)(emptyList)
 
+// apply a function to every element in a list
 var map = (f) => (list) =>
   list(
     () => emptyList)(
     (head) => (tail) => cons(f(head))(map(f)(tail)))
 
-var compose = (f) => (g) => (x) => f(g(x))
-
+// generate a list of numbers from lo to hi
 var listFromTo = (lo) => (hi) =>
   Qif(numEq(lo)(hi))(
     () => singleton(lo))(
@@ -132,7 +140,8 @@ var toFizzbuzz = (n) =>
 
 var makeFizzbuzzes = (max) => map(toFizzbuzz)(listFromTo(one)(max))
 
-// utilities
+// Interface code. Only stuff below here is allowed to use JS features other
+// than just functions (eg, strings, numbers, console)
 var log = console.log.bind(console)
 var toNum  = (n) => n((x) => x + 1)(0)
 var toBool = (b) => Qif(b)(() => true)(() => false)
@@ -151,6 +160,7 @@ var showFizzbuzz = (fb) =>
 
 var showFizzbuzzes = (fbs) => showList(map(showFizzbuzz)(fbs))
 
+// Warning: this is really expensive!
 var go = function() {
   var fizzbuzzes = makeFizzbuzzes(oneHundred)
   document.write(showFizzbuzzes(fizzbuzzes))
