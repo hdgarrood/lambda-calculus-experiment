@@ -26,7 +26,7 @@ var mult = (n) => (m) => (f) => (x) =>
 
 var ten = mult(two)(five)
 var fifteen = mult(three)(five)
-var one_hundred = mult(ten)(ten)
+var oneHundred = mult(ten)(ten)
 
 // booleans
 // The intended use here is that when using Qif, you supply 0-arity functions
@@ -36,6 +36,7 @@ var one_hundred = mult(ten)(ten)
 var Qtrue  = (a) => (b) => a()
 var Qfalse = (a) => (b) => b()
 var Qif    = (b) => b
+var not = (truthval) => (a) => (b) => truthval(b)(a)
 
 var isZero = (n) =>
   n(Qconst(Qfalse))(Qtrue)
@@ -65,8 +66,16 @@ var factorialRecur = (recur) => (n) =>
 
 var factorial = Y(factorialRecur)
 
-var div = (n) => (m) =>
-  
+var lessThan = (n) => (m) =>
+  Qif(isZero(n))(
+    () => not(isZero(m)))(
+    () => Qif(isZero(m))(
+      () => Qfalse)(
+      () => lessThan(dec(n))(dec(m))))
+
+
+// var div = (n) => (m) =>
+//   Qif(
 
 // var mod = (n) => (m) => (f) => (x) =>
   
