@@ -85,6 +85,28 @@ var div = Y(divRecur)
 var mod = (n) => (m) =>
   sub(n)(mult(m)(div(n)(m)))
 
+var numEq = (n) => (m) =>
+  Qif(lessThan(n)(m))(
+    () => isZero(sub(m)(n)))(
+    () => isZero(sub(n)(m)))
+
+// lists!
+// A list is a function: type List a = (() -> r) -> (a -> List a -> r) -> r
+var emptyList = (whenEmpty) => (whenCons) => whenEmpty()
+var cons = (elem) => (list) => (whenEmpty) => (whenCons) => whenCons(elem)(list)
+
+var isEmpty = (list) => list(() => Qtrue)((h, t) => Qfalse)
+
+var map = (f) => (list) =>
+  list(
+    () => emptyList)(
+    (head) => (tail) => cons(f(head))(map(f)(tail)))
+
+var compose = (f) => (g) => (x) => f(g(x))
+
+
+// utilities
+var log = console.log.bind(console)
 var toNum  = (n) => n((x) => x + 1)(0)
 var toBool = (b) => Qif(b)(() => true)(() => false)
 
