@@ -90,12 +90,18 @@ var numEq = (n) => (m) =>
     () => isZero(sub(m)(n)))(
     () => isZero(sub(n)(m)))
 
+var divides = (n) => (m) =>
+  isZero(mod(n)(m))
+
 // lists!
 // A list is a function: type List a = (() -> r) -> (a -> List a -> r) -> r
 var emptyList = (whenEmpty) => (whenCons) => whenEmpty()
 var cons = (elem) => (list) => (whenEmpty) => (whenCons) => whenCons(elem)(list)
 
 var isEmpty = (list) => list(() => Qtrue)((h, t) => Qfalse)
+
+// make a list with one element
+var singleton = (elem) => cons(elem)(emptyList)
 
 var map = (f) => (list) =>
   list(
@@ -104,10 +110,48 @@ var map = (f) => (list) =>
 
 var compose = (f) => (g) => (x) => f(g(x))
 
+var listFromTo = (lo) => (hi) =>
+  Qif(numEq(lo)(hi))(
+    () => singleton(lo))(
+    () => cons(lo)(listFromTo(inc(lo))(hi)))
+
+// data Fizzbuzz a = Fizz | Buzz | Fizzbuzz | Nope a
+var fizz        = (a) => (_) => (_) => (_) => a()
+var buzz        = (_) => (a) => (_) => (_) => a()
+var fizzbuzz    = (_) => (_) => (a) => (_) => a()
+var nope = (x) => (_) => (_) => (_) => (f) => f(x)
+
+var toFizzbuzz = (n) =>
+  Qif(divides(n)(fifteen))(
+    () => fizzbuzz)(
+    () => Qif(divides(n)(three))(
+      () => fizz)(
+      () => Qif(divides(n)(five))(
+        () => buzz)(
+        () => nope(n))))
+
+var makeFizzbuzzes = (max) => map(toFizzbuzz)(listFromTo(one)(max))
 
 // utilities
 var log = console.log.bind(console)
 var toNum  = (n) => n((x) => x + 1)(0)
 var toBool = (b) => Qif(b)(() => true)(() => false)
 
-//document.write(toNum(factorial(five)))
+var showList = (list) =>
+  list(
+    () => "")(
+    (head) => (tail) => head.toString() + ' ' + showList(tail))
+
+var showFizzbuzz = (fb) =>
+  fb(
+    () => "fizz")(
+    () => "buzz")(
+    () => "fizzbuzz")(
+    (x) => toNum(x).toString())
+
+var showFizzbuzzes = (fbs) => showList(map(showFizzbuzz)(fbs))
+
+var go = function() {
+  var fizzbuzzes = makeFizzbuzzes(oneHundred)
+  document.write(showFizzbuzzes(fizzbuzzes))
+}
