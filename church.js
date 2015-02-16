@@ -66,16 +66,17 @@ var factorialRecur = (recur) => (n) =>
 
 var factorial = Y(factorialRecur)
 
-var lessThan = (n) => (m) =>
+var lessThanRecur = (recur) => (n) => (m) =>
   Qif(isZero(n))(
     () => not(isZero(m)))(
     () => Qif(isZero(m))(
       () => Qfalse)(
-      () => lessThan(dec(n))(dec(m))))
+      () => recur(dec(n))(dec(m))))
 
+var lessThan = Y(lessThanRecur)
 
-// var div = (n) => (m) =>
-//   Qif(
+// var divRecur = (recur) => (n) => (m) =>
+//    Qif(
 
 // var mod = (n) => (m) => (f) => (x) =>
   
