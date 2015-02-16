@@ -35,7 +35,7 @@ var oneHundred = mult(ten)(ten)
 // don't work.
 var Qtrue  = (a) => (b) => a()
 var Qfalse = (a) => (b) => b()
-var Qif    = (b) => b
+var Qif    = I
 var not = (truthval) => (a) => (b) => truthval(b)(a)
 
 var isZero = (n) =>
@@ -75,11 +75,15 @@ var lessThanRecur = (recur) => (n) => (m) =>
 
 var lessThan = Y(lessThanRecur)
 
-// var divRecur = (recur) => (n) => (m) =>
-//    Qif(
+var divRecur = (recur) => (n) => (m) =>
+  Qif(lessThan(n)(m))(
+    () => zero)(
+    () => add(one)(recur(sub(n)(m))(m)))
 
-// var mod = (n) => (m) => (f) => (x) =>
-  
+var div = Y(divRecur)
+
+var mod = (n) => (m) =>
+  sub(n)(mult(m)(div(n)(m)))
 
 var toNum  = (n) => n((x) => x + 1)(0)
 var toBool = (b) => Qif(b)(() => true)(() => false)
